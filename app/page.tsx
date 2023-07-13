@@ -1,47 +1,38 @@
-import './globals.css';
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { OpenAI } from 'langchain/llms/openai';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { MemoryVectorStore } from 'langchain/vectorstores/memory';
-import { Document } from 'langchain/dist/document';
+import { OpenAI } from 'langchain/llms/openai';
 import { PromptTemplate } from 'langchain/prompts';
+import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { Configuration, OpenAIApi } from 'openai';
-
-type PDFMetadata = { loc: { lines: { from: number; to: number } } };
+import { splitPDFToChunks } from '../domain/splitPDFToChunks';
 
 /**
  *
  * @see https://github.com/arafipro/next-langchain-sample
  * @see https://qiita.com/windows222/items/232f05bafa95a9c8874e
  * @see https://colab.research.google.com/drive/1n0qtXXUdHdK376VjFM-rtAR9PWIPjNXi?usp=sharing
+ * @see https://flowbite.com/docs/typography/text/#pre-line
  */
 export default async function Home() {
-  const loader = new PDFLoader('public/pg.pdf', { splitPages: false });
-  const pdfDocuments = await loader.load();
-  const splitter = new RecursiveCharacterTextSplitter({
+  const chunkDocuments = await splitPDFToChunks('public/pg.pdf', {
     chunkSize: 512,
     chunkOverlap: 24,
   });
-  const chunkDocuments = (await splitter.createDocuments(
-    pdfDocuments.map((pd) => pd.pageContent),
-  )) as Document<PDFMetadata>[];
 
-  const model = new OpenAI({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-  });
-  const embeddings = new OpenAIEmbeddings({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-  });
-  const vectorStore = await MemoryVectorStore.fromDocuments(
-    chunkDocuments,
-    embeddings,
-  );
+  // const model = new OpenAI({
+  //   openAIApiKey: process.env.OPENAI_API_KEY,
+  // });
+  // const embeddings = new OpenAIEmbeddings({
+  //   openAIApiKey: process.env.OPENAI_API_KEY,
+  // });
+  // const vectorStore = await MemoryVectorStore.fromDocuments(
+  //   chunkDocuments,
+  //   embeddings,
+  // );
   const question = 'What is the name of your company?'; // 会社名は何ですか？
   // const relevantDocs = (await vectorStore.similaritySearch(
   //   question,
   //   5,
-  // )) as Document<PDFMetadata>[];
+  // )) as Document<PDFChunkMetadata>[];
   // const relevantDocsPageContents = relevantDocs.map((doc) => doc.pageContent);
   const relevantDocsPageContents = [
     `About Procter & Gamble
@@ -200,12 +191,12 @@ If you don't know the answer, just say that you don't know. Don't try to make up
   return (
     <main>
       <h1 className="text-center text-3xl text-gray-800 dark:text-gray-200">
-        langchain
+        PDF Question AI
       </h1>
       <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
         AI response
       </h2>
-      <p className="text-gray-600 whitespace-pre-line dark:text-gray-300">
+      <p className="whitespace-pre-line text-gray-600 dark:text-gray-300">
         {aiResponse}
       </p>
       <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
@@ -221,7 +212,7 @@ If you don't know the answer, just say that you don't know. Don't try to make up
       <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
         prompt
       </h2>
-      <p className="text-gray-600 text-sm whitespace-pre-line dark:text-gray-400">
+      <p className="whitespace-pre-line text-sm text-gray-600 dark:text-gray-400">
         {prompt}
       </p>
     </main>
