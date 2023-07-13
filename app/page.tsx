@@ -5,7 +5,7 @@ import { OpenAI } from 'langchain/llms/openai';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { loadQAMapReduceChain } from 'langchain/chains';
-import { Document, DocumentInput } from 'langchain/dist/document';
+import { Document } from 'langchain/dist/document';
 
 type PDFMetadata = { loc: { lines: { from: number; to: number } } };
 
@@ -32,13 +32,14 @@ export default async function Home() {
   const embeddings = new OpenAIEmbeddings({
     openAIApiKey: process.env.OPENAI_API_KEY,
   });
-  const store = await MemoryVectorStore.fromDocuments(
+  const vectorStore = await MemoryVectorStore.fromDocuments(
     chunkDocuments,
     embeddings,
   );
   const question = 'What is the name of your company?'; // 会社名は何ですか？
-  const relevantDocs = (await store.similaritySearch(
+  const relevantDocs = (await vectorStore.similaritySearch(
     question,
+    5,
   )) as Document<PDFMetadata>[];
 
   const chain = loadQAMapReduceChain(model);
@@ -49,11 +50,17 @@ export default async function Home() {
 
   return (
     <main>
-      <h1 className="text-center text-3xl">langchain</h1>
+      <h1 className="text-center text-3xl text-gray-800 dark:text-gray-200">
+        langchain
+      </h1>
+      <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
+        question
+      </h2>
+      <p>{question}</p>
       <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
         relavant documents
       </h2>
-      <ul className="space-y-1 text-sm text-gray-600 list-disc list-inside dark:text-gray-300">
+      <ul className="list-inside list-disc space-y-1 text-sm text-gray-600 dark:text-gray-300">
         {relevantDocs &&
           relevantDocs.map((doc, i) => (
             <li className="list-disc" key={i}>
