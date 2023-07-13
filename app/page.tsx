@@ -7,6 +7,8 @@ import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { loadQAMapReduceChain } from 'langchain/chains';
 import { Document, DocumentInput } from 'langchain/dist/document';
 
+type PDFMetadata = { loc: { lines: { from: number; to: number } } };
+
 /**
  *
  * @see https://github.com/arafipro/next-langchain-sample
@@ -22,7 +24,7 @@ export default async function Home() {
   });
   const chunkDocuments = (await splitter.createDocuments(
     pdfDocuments.map((pd) => pd.pageContent),
-  )) as Document[];
+  )) as Document<PDFMetadata>[];
 
   const model = new OpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY,
@@ -35,7 +37,9 @@ export default async function Home() {
     embeddings,
   );
   const question = 'What is the name of your company?'; // 会社名は何ですか？
-  const relevantDocs = await store.similaritySearch(question);
+  const relevantDocs = (await store.similaritySearch(
+    question,
+  )) as Document<PDFMetadata>[];
 
   const chain = loadQAMapReduceChain(model);
   // const res = await chain.call({
@@ -46,7 +50,7 @@ export default async function Home() {
   return (
     <main>
       <h1 className="text-center text-3xl">langchain</h1>
-      <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+      <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
         relavant documents
       </h2>
       <ul className="space-y-1 text-sm text-gray-600 list-disc list-inside dark:text-gray-300">
