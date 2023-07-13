@@ -6,6 +6,7 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { loadQAMapReduceChain } from 'langchain/chains';
 import { Document } from 'langchain/dist/document';
+import { PromptTemplate } from 'langchain/prompts';
 
 type PDFMetadata = { loc: { lines: { from: number; to: number } } };
 
@@ -41,6 +42,13 @@ export default async function Home() {
     question,
     5,
   )) as Document<PDFMetadata>[];
+
+  // We can also use the `fromTemplate` method to create a `PromptTemplate` object.
+  const promptB = PromptTemplate.fromTemplate(
+    `What is a good name for a company that makes {product}?`,
+  );
+  const responseB = await promptB.format({ product: 'colorful socks' });
+  console.log({ responseB });
 
   const chain = loadQAMapReduceChain(model);
   // const res = await chain.call({
