@@ -38,12 +38,108 @@ export default async function Home() {
     embeddings,
   );
   const question = 'What is the name of your company?'; // 会社名は何ですか？
-  const relevantDocs = (await vectorStore.similaritySearch(
-    question,
-    5,
-  )) as Document<PDFMetadata>[];
+  // const relevantDocs = (await vectorStore.similaritySearch(
+  //   question,
+  //   5,
+  // )) as Document<PDFMetadata>[];
+  // const relevantDocsPageContents = relevantDocs.map((doc) => doc.pageContent);
+  const relevantDocsPageContents = [
+    `About Procter & Gamble
+  P&G serves consumers around the world with one of the strongest portfolios of trusted, quality,
+  leadership brands, including Always®, Ambi Pur®, Ariel®, Bounty®, Charmin®, Crest®, Dawn®,
+  Downy®, Fairy®, Febreze®, Gain®, Gillette®, Head & Shoulders®, Lenor®, Olay®, Oral-B®,
+  Pampers®, Pantene®, SK-II®, Tide®, Vicks®, and Whisper®. The P&G community includes operations`,
+    `Executive Officer. “Our team’s strong execution of our strategies and our progress through three quarters
+  enable us to raise our fiscal year outlook for sales growth and cash return to shareowners and maintain our
+  guidance range for EPS growth despite continued cost and foreign exchange headwinds. We remain
+  committed to our integrated strategies of a focused product portfolio of daily use categories where`,
+    `11%
+  Corporate
+  173
+  N/A
+  (268)
+  N/A
+  (114)
+  N/A
+  Total Company
+  $20,068
+  4%
+  $4,288
+  5%
+  $3,424
+  2%
+  Three Months Ended March 31, 2023
+  Net Sales Drivers
+  (1)
+  Volume
+  Organic
+  Volume
+  Foreign
+  Exchange
+  Price
+  Mix
+  Other
+  (2)
+  Net Sales
+  Beauty
+  1%
+  —%
+  (5)%
+  8%
+  (1)%
+  —%
+  3%
+  Grooming
+  (1)%
+  (1)%
+  (6)%
+  10%
+  (2)%
+  —%
+  1%
+  Health Care
+  1%
+  1%
+  (3)%
+  6%
+  3%
+  (1)%
+  6%
+  Fabric & Home Care
+  (5)%
+  (5)%
+  (4)%
+  13%
+  1%
+  —%
+  5%
+  Baby, Feminine & Family Care
+  (4)%
+  (4)%
+  (3)%
+  8%
+  2%
+  —%
+  3%
+  Total Company
+  (3)%
+  (3)%
+  (4)%
+  10%
+  1%
+  —%
+  4%
+  (1)`,
+    `successfully responding to competitive factors such as prices, promotional incentives and trade terms for
+  products; (8) the ability to manage and maintain key customer relationships; (9) the ability to protect our
+  reputation and brand equity by successfully managing real or perceived issues, including concerns about
+  safety, quality, ingredients, efficacy, packaging content, supply chain practices or similar matters that may`,
+    `Section 21E of the Securities Exchange Act of 1934. These forward-looking statements generally are
+  identified by the words "believe," "project," "expect," "anticipate," "estimate," "intend," "strategy,"
+  "future," "opportunity," "plan," "may," "should," "will," "would," "will be," "will continue," "will likely
+  result" and similar expressions. Forward-looking statements are based on current expectations and`,
+  ];
 
-  // We can also use the `fromTemplate` method to create a `PromptTemplate` object.
   const promptTemplate = PromptTemplate.fromTemplate(
     `Given the following extracted parts of a long document and a question, create a final answer. 
 If you don't know the answer, just say that you don't know. Don't try to make up an answer.
@@ -78,8 +174,8 @@ If you don't know the answer, just say that you don't know. Don't try to make up
   );
   const prompt = await promptTemplate.format({
     question,
-    summaries: relevantDocs
-      .map((doc) => `[CONTENT]: ${doc.pageContent}......`)
+    summaries: relevantDocsPageContents
+      .map((content) => `[CONTENT]: ${content}......`)
       .join('\n\n'),
   });
 
@@ -87,43 +183,47 @@ If you don't know the answer, just say that you don't know. Don't try to make up
     apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
+  // const response = await openai.createCompletion({
+  //   model: 'text-davinci-003',
+  //   prompt,
+  //   temperature: 0,
+  //   max_tokens: 100,
+  //   top_p: 1,
+  //   frequency_penalty: 0.0,
+  //   presence_penalty: 0.0,
+  // });
 
-  const response = await openai.createCompletion({
-    model: 'text-davinci-003',
-    prompt,
-    temperature: 0,
-    max_tokens: 100,
-    top_p: 1,
-    frequency_penalty: 0.0,
-    presence_penalty: 0.0,
-  });
-
-  console.dir(response.data);
+  // console.dir(response.data);
+  // const aiResponse = response.data.choices[0].text
+  const aiResponse = 'The name of the company is Procter & Gamble.';
 
   return (
     <main>
       <h1 className="text-center text-3xl text-gray-800 dark:text-gray-200">
         langchain
       </h1>
-      <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
+      <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
         AI response
       </h2>
-      <pre>{response.data.choices[0].text}</pre>
-      <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
-        prompt
-      </h2>
-      <pre>{prompt}</pre>
-      <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
-        relavant documents
+      <p className="text-gray-600 whitespace-pre-line dark:text-gray-300">
+        {aiResponse}
+      </p>
+      <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+        relevant documents
       </h2>
       <ul className="list-inside list-disc space-y-1 text-sm text-gray-600 dark:text-gray-300">
-        {relevantDocs &&
-          relevantDocs.map((doc, i) => (
-            <li className="list-disc" key={i}>
-              {doc.pageContent}……
-            </li>
-          ))}
+        {relevantDocsPageContents.map((text, i) => (
+          <li className="list-disc" key={i}>
+            {text}……
+          </li>
+        ))}
       </ul>
+      <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+        prompt
+      </h2>
+      <p className="text-gray-600 text-sm whitespace-pre-line dark:text-gray-400">
+        {prompt}
+      </p>
     </main>
   );
 }
