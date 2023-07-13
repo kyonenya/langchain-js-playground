@@ -1,12 +1,11 @@
+import './globals.css';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
-import {
-  CharacterTextSplitter,
-  RecursiveCharacterTextSplitter,
-} from 'langchain/text_splitter';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { OpenAI } from 'langchain/llms/openai';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { loadQAMapReduceChain } from 'langchain/chains';
+import { Document, DocumentInput } from 'langchain/dist/document';
 
 /**
  *
@@ -21,9 +20,9 @@ export default async function Home() {
     chunkSize: 512,
     chunkOverlap: 24,
   });
-  const chunkDocuments = await splitter.createDocuments(
+  const chunkDocuments = (await splitter.createDocuments(
     pdfDocuments.map((pd) => pd.pageContent),
-  );
+  )) as Document[];
 
   const model = new OpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY,
@@ -35,9 +34,9 @@ export default async function Home() {
     chunkDocuments,
     embeddings,
   );
-
   const question = 'What is the name of your company?'; // 会社名は何ですか？
   const relevantDocs = await store.similaritySearch(question);
+
   const chain = loadQAMapReduceChain(model);
   // const res = await chain.call({
   //   input_documents: relevantDocs,
@@ -47,7 +46,17 @@ export default async function Home() {
   return (
     <main>
       <h1 className="text-center text-3xl">langchain</h1>
-      {/* <p className="text-center pt-2">{res.text}</p> */}
+      <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+        relavant documents
+      </h2>
+      <ul className="space-y-1 text-sm text-gray-600 list-disc list-inside dark:text-gray-300">
+        {relevantDocs &&
+          relevantDocs.map((doc, i) => (
+            <li className="list-disc" key={i}>
+              {doc.pageContent}……
+            </li>
+          ))}
+      </ul>
     </main>
   );
 }
