@@ -188,11 +188,38 @@ If you don't know the answer, just say that you don't know. Don't try to make up
   // const aiResponse = response.data.choices[0].text
   const aiResponse = 'The name of the company is Procter & Gamble.';
 
+  const submitAction = async (formData: FormData) => {
+    "use server";
+    const file = formData.get("file");
+    if (!file || typeof file === "string") return
+    const chunckDocs = await splitPDFToChunks(file, {
+      chunkSize: 512,
+      chunkOverlap: 24,
+    })
+    console.log(chunckDocs)
+  };
+
   return (
     <main>
       <h1 className="text-center text-3xl text-gray-800 dark:text-gray-200">
         PDF Question AI
       </h1>
+      <form action={submitAction}>
+        <label
+          className="mb-2 block text-gray-900 dark:text-white"
+          htmlFor="pdf-input"
+        >
+          Upload PDF file
+        </label>
+        <input
+          id="pdf-input"
+          type="file"
+          name="file"
+          accept="application/pdf"
+          className="block max-w-4xl cursor-pointer rounded-sm border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+        />
+        <button type="submit">GO</button>
+      </form>
       <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
         AI response
       </h2>
