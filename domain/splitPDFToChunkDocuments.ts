@@ -5,7 +5,7 @@ import {
   RecursiveCharacterTextSplitterParams,
 } from 'langchain/text_splitter';
 
-type PDFChunkMetadata = {
+export type PDFChunkMetadata = {
   source: string;
   pdf: {
     version: string;
@@ -19,7 +19,7 @@ type PDFChunkMetadata = {
   };
 };
 
-export const splitPDFToChunks = async (
+export const splitPDFToChunkDocuments = async (
   filePathOrBlob: string | Blob,
   params: Partial<RecursiveCharacterTextSplitterParams>,
 ) => {

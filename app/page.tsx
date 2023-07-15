@@ -196,7 +196,7 @@ If you don't know the answer, just say that you don't know. Don't try to make up
       chunkSize: 512,
       chunkOverlap: 24,
     })
-    console.log(chunckDocs)
+    return chunckDocs
   };
 
   return (
