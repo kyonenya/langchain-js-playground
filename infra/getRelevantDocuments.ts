@@ -128,18 +128,26 @@ export const sampleRelevantDocuments: Document<PDFChunkMetadata>[] = [
   },
 ];
 
-export const getRelevantDocuments = async (
-  query: string,
-  documents: Document<PDFChunkMetadata>[],
-  k = 5
-) => {
+export const getRelevantDocuments = async ({
+  question,
+  documents,
+  limit,
+  mock = false,
+}: {
+  question: string;
+  documents: Document<PDFChunkMetadata>[];
+  limit: number;
+  mock: boolean;
+}) => {
+  if (mock) return sampleRelevantDocuments;
+
   const embeddings = new OpenAIEmbeddings({ openAIApiKey });
   const vectorStore = await MemoryVectorStore.fromDocuments(
     documents,
     embeddings
   );
   return (await vectorStore.similaritySearch(
-    query,
-    k
+    question,
+    limit
   )) as Document<PDFChunkMetadata>[];
 };

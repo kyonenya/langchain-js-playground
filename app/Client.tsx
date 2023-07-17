@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { PDFDocumentPlainObject } from '../domain/splitPDFToChunkDocuments';
 import { SubmitAction } from './page';
 
@@ -25,6 +25,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
         </h2>
 
         <input
+          required
           name="pdf-input"
           type="file"
           accept="application/pdf"
@@ -34,6 +35,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
         <div className="mx-auto flex flex-row gap-3">
           <div className="shadow-xs dark:shadow-xs relative flex w-full flex-grow flex-col rounded-xl border border-black/10 bg-white py-[10px] dark:border-gray-900/50 dark:bg-gray-700 dark:text-white md:py-4 md:pl-4">
             <textarea
+              required
               name="prompt-textarea"
               tabIndex={0}
               rows={4}
@@ -75,16 +77,21 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
       <ul className="list-inside list-disc space-y-1 text-sm text-gray-600 dark:text-gray-300">
         {relevantDocuments.map((doc, i) => (
           <li className="list-disc" key={i}>
-            {doc.pageContent}
+            {doc.pageContent.split('\n').map((item, i, arr) => {
+              return (
+                <Fragment key={i}>
+                  {item}
+                  {i !== arr.length - 1 && (
+                    <span className="text-slate-400 dark:text-slate-400">
+                      \n
+                    </span>
+                  )}
+                </Fragment>
+              );
+            })}
           </li>
         ))}
       </ul>
-      <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
-        prompt
-      </h2>
-      <p className="whitespace-pre-line text-gray-600 dark:text-gray-300">
-        {prompt}
-      </p>
     </>
   );
 };

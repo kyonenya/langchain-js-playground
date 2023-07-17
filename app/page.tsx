@@ -39,11 +39,12 @@ export default async function Home() {
       chunkSize: 512,
       chunkOverlap: 24,
     });
-    const relevantDocuments = await getRelevantDocuments(
+    const relevantDocuments = await getRelevantDocuments({
       question,
-      chunckDocuments,
-      5
-    );
+      documents: chunckDocuments,
+      limit: 5,
+      mock: true,
+    });
     const prompt = await getQAPrompt(question, relevantDocuments);
 
     return {
