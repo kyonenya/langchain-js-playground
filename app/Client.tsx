@@ -1,23 +1,26 @@
 'use client';
 
+import { useCompletion } from 'ai/react';
 import { Fragment, useState } from 'react';
 import { PDFDocumentPlainObject } from '../domain/splitPDFToChunkDocuments';
 import { SubmitAction } from './page';
 
 export const Client = (props: { submitAction?: SubmitAction }) => {
+  const { completion, complete, stop, isLoading } = useCompletion({
+    api: '/api/completion',
+  });
   const [relevantDocuments, setRelevantDocuments] = useState<
     PDFDocumentPlainObject[]
   >([]);
-  const [prompt, setPrompt] = useState<string>('');
 
   return (
     <>
       <form
         action={async (formData) => {
-          const { prompt = '', relevantDocuments = [] } =
+          const { prompt, relevantDocuments } =
             (await props.submitAction?.(formData)) ?? {};
-          setRelevantDocuments(relevantDocuments);
-          setPrompt(prompt);
+          setRelevantDocuments(relevantDocuments ?? []);
+          await complete(prompt ?? '');
         }}
       >
         <h2 className="mb-2 mt-4 font-semibold text-gray-800 dark:text-gray-200">
@@ -68,8 +71,8 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
       <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
         AI response
       </h2>
-      <p className="whitespace-pre-line text-gray-600 dark:text-gray-300">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      <p className="min-h-[50px] whitespace-pre-line text-lg text-gray-700 dark:text-gray-300">
+        {completion}
       </p>
       <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
         Relevant documents

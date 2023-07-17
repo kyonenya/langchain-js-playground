@@ -22,8 +22,6 @@ export type SubmitAction = (formData: FormData) => Promise<
  * @see https://flowbite.com/docs/typography/text/#pre-line
  */
 export default async function Home() {
-  const question = 'What is the name of your company?';
-
   const submitAction: SubmitAction = async (formData) => {
     'use server';
     const file = formData.get('pdf-input');
