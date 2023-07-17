@@ -41,7 +41,7 @@ export default async function Home() {
       question,
       documents: chunckDocuments,
       limit: 5,
-      mock: true,
+      // mock: true,
     });
     const prompt = await getQAPrompt(question, relevantDocuments);
 
@@ -52,7 +52,7 @@ export default async function Home() {
   };
 
   return (
-    <main>
+    <main className="py-4 md:py-6">
       <h1 className="text-center text-3xl text-gray-800 dark:text-gray-200">
         PDF Question AI
       </h1>

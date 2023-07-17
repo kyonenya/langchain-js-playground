@@ -137,7 +137,7 @@ export const getRelevantDocuments = async ({
   question: string;
   documents: Document<PDFChunkMetadata>[];
   limit: number;
-  mock: boolean;
+  mock?: boolean;
 }) => {
   if (mock) return sampleRelevantDocuments;
 

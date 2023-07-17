@@ -9,7 +9,7 @@ import { SubmitAction } from './page';
 const Container = (props: PropsWithChildren<{ className?: string }>) => (
   <div
     className={twMerge(
-      'container mx-auto px-4 py-4 md:max-w-2xl md:py-6 lg:max-w-[38rem] lg:px-0 xl:max-w-3xl',
+      'container mx-auto px-4 py-6 md:max-w-2xl lg:max-w-[38rem] lg:px-0 xl:max-w-3xl',
       props.className
     )}
   >
@@ -18,7 +18,7 @@ const Container = (props: PropsWithChildren<{ className?: string }>) => (
 );
 
 export const Client = (props: { submitAction?: SubmitAction }) => {
-  const { completion, complete, stop, isLoading } = useCompletion({
+  const { completion, complete } = useCompletion({
     api: '/api/completion',
   });
   const [relevantDocuments, setRelevantDocuments] = useState<
@@ -36,16 +36,14 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
             await complete(prompt ?? '');
           }}
         >
-          <h2 className="mb-2 mt-4 font-semibold text-gray-700 dark:text-gray-300">
-            Upload PDF file
-          </h2>
+          <h2 className="mb-2 font-semibold">Upload PDF file</h2>
 
           <input
             required
             name="pdf-input"
             type="file"
             accept="application/pdf"
-            className="mb-4 block max-w-4xl cursor-pointer rounded-sm border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+            className="mb-4 max-w-4xl cursor-pointer rounded-sm border border-gray-300 bg-gray-50 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400"
           />
 
           <div className="mx-auto flex flex-row gap-3">
@@ -84,7 +82,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
 
       <div className="group w-full border-b border-black/10 bg-gray-50 text-gray-800 dark:border-gray-900/50 dark:bg-[#444654] dark:text-gray-100">
         <Container>
-          <div className="m-auto flex gap-4 p-4 text-base md:gap-6">
+          <div className="m-auto flex gap-4 px-4 text-base md:gap-6">
             <div className="relative flex flex-shrink-0 flex-col items-end">
               <div className="w-[30px]">
                 <div className="relative flex h-[30px] w-[30px] items-center justify-center rounded-sm bg-green-500 p-1 text-white">
@@ -113,22 +111,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
             <div className="relative flex flex-col gap-1 md:gap-3">
               <div className="flex flex-grow flex-col gap-3">
                 <div className="flex min-h-[20px] flex-col items-start gap-4 overflow-x-auto whitespace-pre-wrap break-words">
-                  <div className="w-full break-words">
-                    <p>
-                      What is the name of your company. What is the name of your
-                      company. What is the name of your company. What is the
-                      name of your company. What is the name of your company.
-                      What is the name of your company. What is the name of your
-                      company. What is the name of your company.
-                    </p>
-                    <p>
-                      What is the name of your company. What is the name of your
-                      company. What is the name of your company. What is the
-                      name of your company. What is the name of your company.
-                      What is the name of your company. What is the name of your
-                      company. What is the name of your company.
-                    </p>
-                  </div>
+                  <div className="w-full break-words">{completion}</div>
                 </div>
               </div>
             </div>
@@ -136,34 +119,27 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
         </Container>
       </div>
 
-      <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-700 dark:text-gray-300">
-        AI response
-      </h2>
-      <p className="min-h-[50px] whitespace-pre-line text-lg text-gray-700 dark:text-gray-300">
-        {/* {completion} */}
-        What is the name of your company
-      </p>
-      <h2 className="mb-2 mt-4 text-lg font-semibold text-gray-700 dark:text-gray-300">
-        Relevant documents
-      </h2>
-      <ul className="list-inside list-disc space-y-1 text-sm text-gray-600 dark:text-gray-300">
-        {relevantDocuments.map((doc, i) => (
-          <li className="list-disc" key={i}>
-            {doc.pageContent.split('\n').map((item, i, arr) => {
-              return (
-                <Fragment key={i}>
-                  {item}
-                  {i !== arr.length - 1 && (
-                    <span className="text-slate-400 dark:text-slate-400">
-                      \n
-                    </span>
-                  )}
-                </Fragment>
-              );
-            })}
-          </li>
-        ))}
-      </ul>
+      <Container>
+        <h2 className="mb-2 text-lg font-semibold">Relevant documents</h2>
+        <ol className="list-inside list-disc space-y-1 pl-4 text-sm">
+          {relevantDocuments.map((doc, i) => (
+            <li className="list-decimal" key={i}>
+              {doc.pageContent.split('\n').map((item, i, arr) => {
+                return (
+                  <Fragment key={i}>
+                    {item}
+                    {i !== arr.length - 1 && (
+                      <span className="text-slate-400 dark:text-slate-400">
+                        \n
+                      </span>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </li>
+          ))}
+        </ol>
+      </Container>
     </>
   );
 };
