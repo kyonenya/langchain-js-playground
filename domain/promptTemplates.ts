@@ -11,14 +11,13 @@ FINAL ANSWER:`);
 export const getQAPrompt = async (
   question: string,
   relevantDocuments: Document<PDFChunkMetadata>[]
-) => {
+) =>
   await qaTemplate.format({
     question,
     contents: relevantDocuments
       .map((doc) => `CONTENT: ${doc.pageContent}`)
       .join('\n\n'),
   });
-};
 
 const fewShotsQATemplate = PromptTemplate.fromTemplate(
   `Given the following extracted parts of a long document and a question, create a final answer. 

@@ -5,7 +5,7 @@ import { PDFChunkMetadata } from '../domain/splitPDFToChunkDocuments';
 
 const openAIApiKey = process.env.OPENAI_API_KEY;
 
-export const sampleRelavantDocuments: Document<PDFChunkMetadata>[] = [
+export const sampleRelevantDocuments: Document<PDFChunkMetadata>[] = [
   {
     pageContent:
       'About Procter &amp; Gamble\nP&amp;G serves consumers around the world with one of the strongest portfolios of trusted, quality, \nleadership  brands,  including  Always®,  Ambi  Pur®,  Ariel®,  Bounty®,  Charmin®,  Crest®,  Dawn®, \nDowny®,  Fairy®,  Febreze®,  Gain®,  Gillette®,  Head  &amp;  Shoulders®,  Lenor®,  Olay®,  Oral-B®, \nPampers®, Pantene®, SK-II®, Tide®, Vicks®, and Whisper®. The P&amp;G community includes operations',
