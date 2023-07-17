@@ -25,6 +25,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
     api: '/api/chat-pdf',
     body: { relevantDocuments },
   });
+  // console.log(messages)
 
   return (
     <>
@@ -45,6 +46,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
             setRelevantDocuments(relevantDocuments ?? []);
 
             handleSubmit(e);
+            setRelevantDocuments([]);
           }}
         >
           <h2 className="mb-2 font-semibold">Upload PDF file</h2>
@@ -136,7 +138,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
       </div>
 
       <Container>
-        <h2 className="mb-2 text-lg font-semibold">Relevant documents</h2>
+        <h2 className="mb-2 font-semibold">Relevant documents</h2>
         <ol className="list-inside list-disc space-y-1 pl-4 text-sm">
           {relevantDocuments.map((doc, i) => (
             <li className="list-decimal" key={i}>

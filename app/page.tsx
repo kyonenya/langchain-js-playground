@@ -32,8 +32,8 @@ export default async function Home() {
       return;
 
     const chunckDocuments = await splitPDFToChunkDocuments(file, {
-      chunkSize: 512,
-      chunkOverlap: 24,
+      chunkSize: 4096,
+      chunkOverlap: 256,
     });
     const relevantDocuments = await getRelevantDocuments({
       question,
