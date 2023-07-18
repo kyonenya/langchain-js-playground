@@ -1,7 +1,7 @@
 'use client';
 
-import { useChat } from 'ai/react';
-import { useState, FormEvent, Fragment, PropsWithChildren } from 'react';
+import { useCompletion } from 'ai/react';
+import { useState, Fragment, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { PDFDocumentPlainObject } from '../domain/splitPDFToChunkDocuments';
 import { SubmitAction } from './page';
@@ -18,35 +18,22 @@ const Container = (props: PropsWithChildren<{ className?: string }>) => (
 );
 
 export const Client = (props: { submitAction?: SubmitAction }) => {
+  const { completion, complete } = useCompletion({
+    api: '/api/completion',
+  });
   const [relevantDocuments, setRelevantDocuments] = useState<
     PDFDocumentPlainObject[]
   >([]);
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: '/api/chat-pdf',
-    body: { relevantDocuments },
-  });
-  // console.log(messages)
 
   return (
     <>
       <Container>
         <form
-          onSubmit={async (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            const pdfInputElement = e.currentTarget.elements.namedItem(
-              'pdf-input'
-            ) as HTMLInputElement;
-
-            const formData = new FormData();
-            formData.append('pdf-input', pdfInputElement.files?.[0] ?? '');
-            formData.append('prompt-textarea', input);
-
-            const { relevantDocuments } =
+          action={async (formData) => {
+            const { prompt, relevantDocuments } =
               (await props.submitAction?.(formData)) ?? {};
             setRelevantDocuments(relevantDocuments ?? []);
-
-            handleSubmit(e);
-            setRelevantDocuments([]);
+            await complete(prompt ?? '');
           }}
         >
           <h2 className="mb-2 font-semibold">Upload PDF file</h2>
@@ -64,8 +51,6 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
               <textarea
                 required
                 name="prompt-textarea"
-                value={input}
-                onChange={handleInputChange}
                 tabIndex={0}
                 rows={4}
                 placeholder="Send a message"
@@ -126,10 +111,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
             <div className="relative flex flex-col gap-1 md:gap-3">
               <div className="flex flex-grow flex-col gap-3">
                 <div className="flex min-h-[20px] flex-col items-start gap-4 overflow-x-auto whitespace-pre-wrap break-words">
-                  <div className="w-full break-words">
-                    {messages.at(-1)?.role === 'assistant' &&
-                      messages.at(-1)?.content}
-                  </div>
+                  <div className="w-full break-words">{completion}</div>
                 </div>
               </div>
             </div>
@@ -139,7 +121,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
 
       <Container>
         <h2 className="mb-2 font-semibold">Relevant documents</h2>
-        <ol className="list-inside list-disc space-y-1 pl-4 text-sm">
+        <ol className="list-inside list-disc space-y-2 pl-4 text-sm">
           {relevantDocuments.map((doc, i) => (
             <li className="list-decimal" key={i}>
               {doc.pageContent.split('\n').map((item, i, arr) => {

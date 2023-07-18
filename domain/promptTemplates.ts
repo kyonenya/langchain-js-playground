@@ -6,7 +6,7 @@ const qaTemplate = PromptTemplate.fromTemplate(`QUESTION: {question}
 =========
 {contents}
 =========
-FINAL ANSWER:`);
+ANSWER:`);
 
 export const getQAPrompt = async (
   question: string,

@@ -1,3 +1,4 @@
+import { getQAPrompt } from '../domain/promptTemplates';
 import {
   PDFDocumentPlainObject,
   splitPDFToChunkDocuments,
@@ -7,6 +8,7 @@ import { Client } from './Client';
 
 export type SubmitAction = (formData: FormData) => Promise<
   | {
+      prompt: string;
       relevantDocuments: PDFDocumentPlainObject[];
     }
   | undefined
@@ -32,8 +34,8 @@ export default async function Home() {
       return;
 
     const chunckDocuments = await splitPDFToChunkDocuments(file, {
-      chunkSize: 4096,
-      chunkOverlap: 256,
+      chunkSize: 3000,
+      chunkOverlap: 150,
     });
     const relevantDocuments = await getRelevantDocuments({
       question,
@@ -41,8 +43,10 @@ export default async function Home() {
       limit: 5,
       // mock: true,
     });
+    const prompt = await getQAPrompt(question, relevantDocuments);
 
     return {
+      prompt,
       relevantDocuments: relevantDocuments.map((doc) => ({ ...doc })), // serialize
     };
   };
