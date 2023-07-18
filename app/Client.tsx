@@ -31,7 +31,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
   const [relevantDocuments, setRelevantDocuments] = useState<
     PDFDocumentPlainObject[]
   >([]);
-  const [isFormLoading, setIsFormLoading] = useState(true);
+  const [isFormLoading, setIsFormLoading] = useState(false);
 
   return (
     <>
@@ -90,9 +90,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
                       ></path>
                     </svg>
                   )}
-                  {isChatLoading && (
-                    <Loader width={25} height={7} className="" />
-                  )}
+                  {isChatLoading && <Loader />}
                 </span>
               </button>
             </div>
@@ -100,7 +98,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
         </form>
       </Container>
 
-      <div className="group min-h-[80px] w-full border-b border-black/10 bg-gray-50 text-gray-800 dark:border-gray-900/50 dark:bg-[#444654] dark:text-gray-100">
+      <div className="group min-h-[80px] w-full border-b border-t border-black/10 bg-gray-50 text-gray-800 dark:border-gray-900/50 dark:bg-[#444654] dark:text-gray-100">
         <Container>
           <div className="m-auto flex gap-4 px-4 text-base md:gap-6">
             {(isChatLoading || completion) && (

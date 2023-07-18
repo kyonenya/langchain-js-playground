@@ -1,10 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 
-export const Loader = (props: {
-  width?: number;
-  height?: number;
-  className?: string;
-}) => {
+export const Loader = (props: { className?: string }) => {
   return (
     <svg
       width="16"

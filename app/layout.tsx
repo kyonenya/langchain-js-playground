@@ -3,7 +3,7 @@ import { PropsWithChildren } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'langchain-next-playground',
+  title: 'PDF Question AI',
   description: 'PDFを読み込んだAIが質問に答えます',
 };
 

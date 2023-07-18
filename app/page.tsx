@@ -1,4 +1,3 @@
-import { writeFileSync } from 'fs';
 import { getQAPrompt } from '../domain/promptTemplates';
 import {
   PDFDocumentPlainObject,
@@ -15,13 +14,6 @@ export type SubmitAction = (formData: FormData) => Promise<
   | undefined
 >;
 
-/**
- *
- * @see https://github.com/arafipro/next-langchain-sample
- * @see https://qiita.com/windows222/items/232f05bafa95a9c8874e
- * @see https://colab.research.google.com/drive/1n0qtXXUdHdK376VjFM-rtAR9PWIPjNXi?usp=sharing
- * @see https://flowbite.com/docs/typography/text/#pre-line
- */
 export default async function Home() {
   const submitAction: SubmitAction = async (formData) => {
     'use server';
