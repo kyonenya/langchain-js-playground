@@ -25,6 +25,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
     completion,
     isLoading: isChatLoading,
     complete,
+    setCompletion,
   } = useCompletion({
     api: '/api/completion',
   });
@@ -38,20 +39,26 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
       <Container>
         <form
           onSubmit={async (e) => {
+            const formData = new FormData(e.target as HTMLFormElement);
             e.preventDefault();
             setIsFormLoading(true);
+            setCompletion('');
             setRelevantDocuments([]);
 
-            const formData = new FormData(e.target as HTMLFormElement);
             const { prompt, relevantDocuments } =
               (await props.submitAction?.(formData)) ?? {};
+
             setIsFormLoading(false);
             setRelevantDocuments(relevantDocuments ?? []);
 
-            await complete(prompt ?? '');
+            if (!prompt) return;
+            await complete(prompt);
           }}
         >
-          <h2 className="mb-2 font-semibold">Upload PDF file</h2>
+          <div className="mb-2 flex flex-row items-center space-x-1.5">
+            <h2 className="font-semibold">Upload PDF file</h2>
+            <span className="text-xs">(～4.5MB)</span>
+          </div>
 
           <input
             required

@@ -1,5 +1,5 @@
-import { PromptTemplate } from 'langchain';
 import { Document } from 'langchain/dist/document';
+import { PromptTemplate } from 'langchain/prompts';
 import { PDFChunkMetadata } from './splitPDFToChunkDocuments';
 
 const qaTemplate = PromptTemplate.fromTemplate(`QUESTION: {question}
