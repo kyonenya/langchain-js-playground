@@ -7,6 +7,7 @@ import {
 
 export type PDFChunkMetadata = {
   source: string;
+  blobType?: string;
   pdf: {
     version: string;
     info: Record<string, unknown>;

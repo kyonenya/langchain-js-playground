@@ -1,3 +1,4 @@
+import { writeFileSync } from 'fs';
 import { getQAPrompt } from '../domain/promptTemplates';
 import {
   PDFDocumentPlainObject,

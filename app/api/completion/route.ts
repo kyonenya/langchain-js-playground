@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     model: 'text-davinci-003',
     stream: true,
     prompt,
-    max_tokens: 524, // ex. 2644 characters
+    max_tokens: 1024,
   });
 
   // Convert the response into a friendly text-stream
