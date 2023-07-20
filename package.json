@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint --fix",
     "format": "prettier --write '**/*.{ts,tsx,json}' --ignore-path .gitignore",
+    "test": "find ./domain -name '*.test.ts' -exec node --test --no-warnings --loader tsx {} \\;",
     "tsc": "tsc -w --noEmit"
   },
   "dependencies": {
