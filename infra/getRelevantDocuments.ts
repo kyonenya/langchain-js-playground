@@ -1,11 +1,10 @@
-import { Document } from 'langchain/dist/document';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
-import { PDFChunkMetadata } from '../domain/splitPDFToChunkDocuments';
+import { PDFDocument, toJSONSerializable } from '../domain/PDFDocument';
 
 const openAIApiKey = process.env.OPENAI_API_KEY;
 
-export const sampleRelevantDocuments: Document<PDFChunkMetadata>[] = [
+export const sampleRelevantDocuments: PDFDocument[] = [
   {
     pageContent:
       'RCM19\n] a free-form conversational dataset\nand performs worst (13 F1 below an ELMo baseline) on QuAC [\nCHI\n+\n18\n] a dataset which requires modeling structured\ndialog acts and answer span selections of teacher-student interactions. On DROP [\nDWD\n+\n19\n], a dataset testing discrete\nreasoning and numeracy in the context of reading comprehension, GPT-3 in a few-shot setting outperforms the fine-tuned\nBERT baseline from the original paper but is still well below both human performance and state-of-the-art approaches\nwhich augment neural networks with symbolic systems [\nRLL\n+\n19\n]. On SQuAD 2.0 [\nRJL18\n], GPT-3 demonstrates its\nfew-shot learning capabilities, improving by almost 10 F1 (to 69.8) compared to a zero-shot setting. This allows it to\nslightly outperform the best fine-tuned result in the original paper. On RACE [\nLXL\n+\n17\n], a multiple choice dataset of\nmiddle school and high school english examinations, GPT-3 performs relatively weakly and is only competitive with\nthe earliest work utilizing contextual representations and is still 45% behind SOTA.\n3.7    SuperGLUE\nIn order to better aggregate results on NLP tasks and compare to popular models such as BERT and RoBERTa in a\nmore systematic way, we also evaluate GPT-3 on a standardized collection of datasets, the SuperGLUE benchmark\n[\nWPN\n+\n19\n] [\nWPN\n+\n19\n] [\nCLC\n+\n19\n] [\nDMST19\n] [\nRBG11\n] [\nKCR\n+\n18\n] [\nZLL\n+\n18\n] [\nDGM06\n] [\nBHDD\n+\n06\n] [\nGMDD07\n]\n[\nBDD\n+\n09\n] [\nPCC18\n] [\nPHR\n+\n18\n]. GPT-3’s test-set performance on the SuperGLUE dataset is shown in Table 3.8. In the\nfew-shot setting, we used 32 examples for all tasks, sampled randomly from the training set. For all tasks except WSC\n18',
@@ -155,7 +154,7 @@ export const getRelevantDocuments = async ({
   mock = false,
 }: {
   question: string;
-  documents: Document<PDFChunkMetadata>[];
+  documents: PDFDocument[];
   limit: number;
   mock?: boolean;
 }) => {
@@ -166,8 +165,6 @@ export const getRelevantDocuments = async ({
     documents,
     embeddings
   );
-  return (await vectorStore.similaritySearch(
-    question,
-    limit
-  )) as Document<PDFChunkMetadata>[];
+  const relevantDocuments = await vectorStore.similaritySearch(question, limit);
+  return toJSONSerializable(relevantDocuments);
 };

@@ -3,7 +3,7 @@
 import { useCompletion } from 'ai/react';
 import { useState, Fragment, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { PDFDocumentPlainObject } from '../domain/splitPDFToChunkDocuments';
+import { PDFDocument } from '../domain/PDFDocument';
 import { ChatGPTIcon } from './_components/ChatGPTIcon';
 import { Loader } from './_components/Loader';
 import { Skelton } from './_components/Skelton';
@@ -29,9 +29,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
   } = useCompletion({
     api: '/api/completion',
   });
-  const [relevantDocuments, setRelevantDocuments] = useState<
-    PDFDocumentPlainObject[]
-  >([]);
+  const [relevantDocuments, setRelevantDocuments] = useState<PDFDocument[]>([]);
   const [isFormLoading, setIsFormLoading] = useState(false);
 
   return (

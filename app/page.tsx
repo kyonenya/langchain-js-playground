@@ -1,15 +1,17 @@
-import { getQAPrompt } from '../domain/promptTemplates';
 import {
-  PDFDocumentPlainObject,
-  splitPDFToChunkDocuments,
-} from '../domain/splitPDFToChunkDocuments';
+  PDFDocument,
+  parsePDF,
+  splitToChunkDocuments,
+} from '../domain/PDFDocument';
+import { isJapaneseString } from '../domain/isJapaneseString';
+import { getQAPrompt } from '../domain/promptTemplates';
 import { getRelevantDocuments } from '../infra/getRelevantDocuments';
 import { Client } from './Client';
 
 export type SubmitAction = (formData: FormData) => Promise<
   | {
       prompt: string;
-      relevantDocuments: PDFDocumentPlainObject[];
+      relevantDocuments: PDFDocument[];
     }
   | undefined
 >;
@@ -26,10 +28,14 @@ export default async function Home() {
     )
       return;
 
-    const chunckDocuments = await splitPDFToChunkDocuments(file, {
-      chunkSize: 3000,
-      chunkOverlap: 150,
-    });
+    const pdfDocuments = await parsePDF(file);
+    const splitParams = isJapaneseString(pdfDocuments[0].pageContent)
+      ? { chunkSize: 1000, chunkOverlap: 100 } // Japanese
+      : { chunkSize: 3000, chunkOverlap: 150 }; // English
+    const chunckDocuments = await splitToChunkDocuments(
+      pdfDocuments,
+      splitParams
+    );
     const relevantDocuments = await getRelevantDocuments({
       question,
       documents: chunckDocuments,

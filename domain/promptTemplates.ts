@@ -1,6 +1,5 @@
-import { Document } from 'langchain/dist/document';
 import { PromptTemplate } from 'langchain/prompts';
-import { PDFChunkMetadata } from './splitPDFToChunkDocuments';
+import { PDFDocument } from './PDFDocument';
 
 const qaTemplate = PromptTemplate.fromTemplate(`QUESTION: {question}
 =========
@@ -10,7 +9,7 @@ ANSWER:`);
 
 export const getQAPrompt = async (
   question: string,
-  relevantDocuments: Document<PDFChunkMetadata>[]
+  relevantDocuments: PDFDocument[]
 ) =>
   await qaTemplate.format({
     question,

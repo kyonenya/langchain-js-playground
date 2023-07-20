@@ -21,21 +21,28 @@ export type PDFChunkMetadata = {
 };
 
 // JSON-serializable plain object
-export type PDFDocumentPlainObject = Pick<
+export type PDFDocument = Pick<
   InstanceType<typeof Document<PDFChunkMetadata>>,
   'metadata' | 'pageContent'
 >;
 
-export const splitPDFToChunkDocuments = async (
-  filePathOrBlob: string | Blob,
-  params: Partial<RecursiveCharacterTextSplitterParams>
-) => {
+export const toJSONSerializable = (documents: Document[]) =>
+  documents.map((doc) => ({ ...doc })) as PDFDocument[]; // peal-off class instance method
+
+export const parsePDF = async (filePathOrBlob: string | Blob) => {
   const loader = new PDFLoader(filePathOrBlob, { splitPages: true });
   const pdfDocuments = await loader.load();
+  return toJSONSerializable(pdfDocuments);
+};
+
+export const splitToChunkDocuments = async (
+  documents: PDFDocument[],
+  params: Partial<RecursiveCharacterTextSplitterParams>
+) => {
   const splitter = new RecursiveCharacterTextSplitter(params);
 
   return (await splitter.createDocuments(
-    pdfDocuments.map((doc) => doc.pageContent),
-    pdfDocuments.map((doc) => doc.metadata)
-  )) as Document<PDFChunkMetadata>[];
+    documents.map((doc) => doc.pageContent),
+    documents.map((doc) => doc.metadata)
+  )) as PDFDocument[];
 };
