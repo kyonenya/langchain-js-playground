@@ -19,12 +19,15 @@ export async function POST(req: Request) {
   // Extract the `prompt` from the body of the request
   const { prompt } = await req.json();
 
-  // Ask OpenAI for a streaming completion given the prompt
-  const response = await openai.createCompletion({
-    model: 'text-davinci-003',
+  /**
+   * Use ChatCompletion as Completion
+   *
+   * @see https://sdk.vercel.ai/docs/api-reference/use-completion#example-building-a-spell-check
+   */
+  const response = await openai.createChatCompletion({
+    model: 'gpt-3.5-turbo',
     stream: true,
-    prompt,
-    max_tokens: 512,
+    messages: [{ role: 'user', content: prompt }],
   });
 
   // Convert the response into a friendly text-stream
