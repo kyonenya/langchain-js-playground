@@ -1,7 +1,10 @@
 import { PromptTemplate } from 'langchain/prompts';
 import { PDFDocument } from './PDFDocument';
 
-const qaTemplate = PromptTemplate.fromTemplate(`QUESTION: {question}
+const qaTemplate =
+  PromptTemplate.fromTemplate(`Given the following extracted parts of a long document and a question, create a final answer. If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+
+QUESTION: {question}
 =========
 {contents}
 =========
@@ -19,8 +22,7 @@ export const getQAPrompt = async (
   });
 
 const fewShotsQATemplate = PromptTemplate.fromTemplate(
-  `Given the following extracted parts of a long document and a question, create a final answer. 
-If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+  `Given the following extracted parts of a long document and a question, create a final answer. If you don't know the answer, just say that you don't know. Don't try to make up an answer.
 
 QUESTION: Which state/country's law governs the interpretation of the contract?
 =========
