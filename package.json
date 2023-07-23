@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
-    "format": "prettier --write '**/*.{ts,tsx,json}' --ignore-path .gitignore",
+    "format": "prettier --write '**/*.{ts,tsx,js,json}' --ignore-path .gitignore",
     "test": "find ./domain -name '*.test.ts' -exec node --test --no-warnings --loader tsx {} \\;",
     "tsc": "tsc -w --noEmit"
   },
@@ -39,5 +39,6 @@
     "tsx": "^3.12.7",
     "typescript": "5.1.6"
   },
-  "packageManager": "pnpm@8.6.7"
+  "packageManager": "pnpm@8.6.7",
+  "type": "module"
 }
