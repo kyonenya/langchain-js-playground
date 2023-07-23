@@ -1,9 +1,17 @@
 'use client';
 
 import { useCompletion } from 'ai/react';
-import { useState, Fragment, PropsWithChildren } from 'react';
+import type PSPDFKitClass from 'pspdfkit';
+import {
+  useState,
+  Fragment,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+} from 'react';
 import { twMerge } from 'tailwind-merge';
 import { PDFDocument } from '../domain/PDFDocument';
+import { readFileAsArrayBuffer } from '../domain/utils';
 import { ChatGPTIcon } from './_components/ChatGPTIcon';
 import { Loader } from './_components/Loader';
 import { Skelton } from './_components/Skelton';
@@ -21,6 +29,8 @@ const Container = (props: PropsWithChildren<{ className?: string }>) => (
 );
 
 export const Client = (props: { submitAction?: SubmitAction }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const {
     completion,
     isLoading: isChatLoading,
@@ -32,25 +42,75 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
   const [relevantDocuments, setRelevantDocuments] = useState<PDFDocument[]>([]);
   const [isFormLoading, setIsFormLoading] = useState(false);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    let PSPDFKit: typeof PSPDFKitClass;
+    if (!container) return;
+
+    (async function () {
+      PSPDFKit = (await import('pspdfkit')) as unknown as typeof PSPDFKitClass;
+      // PSPDFKit.unload(container);
+
+      const instance = await PSPDFKit.load({
+        disableWebAssemblyStreaming: true,
+        // Container where PSPDFKit should be mounted.
+        container,
+        // The document to open.
+        document: './kyonenya2019.pdf',
+        // Use the public directory URL as a base URL. PSPDFKit will download its library assets from here.
+        baseUrl: `${window.location.protocol}//${window.location.host}/`,
+      });
+
+      const textLineIndex = 0;
+      const textLines = await instance.textLinesForPageIndex(textLineIndex);
+      textLines.forEach((textLine, textLineIndex) => {
+        // console.log(`Content for text line ${textLineIndex}`);
+        // console.log(`Text: ${textLine.contents}`);
+        // console.log(textLine.contents);
+        // console.log(JSON.stringify(textLine.contents));
+        // console.log(Array.from(textLine.contents));
+        // console.log(`Id: ${textLine.id}`);
+        // console.log(`Page index: ${textLine.pageIndex}`);
+      });
+      const text = textLines.map((textLine) => textLine.contents).join('\n');
+      console.log(text);
+    })();
+
+    return () => {
+      PSPDFKit && PSPDFKit.unload(container);
+    };
+  }, []);
+
   return (
     <>
       <Container>
         <form
           onSubmit={async (e) => {
-            const formData = new FormData(e.target as HTMLFormElement);
             e.preventDefault();
+
+            const formData = new FormData(e.target as HTMLFormElement);
+            const PSPDFKit = (await import('pspdfkit')) as any;
+            const instance = await PSPDFKit.load({
+              container: 'body',
+              document: await readFileAsArrayBuffer(
+                formData.get('pdf-input') as File
+              ),
+            });
+            const textLines = await instance.textLinesForPageIndex(0);
+            console.log(textLines);
+
             setIsFormLoading(true);
             setCompletion('');
             setRelevantDocuments([]);
 
-            const { prompt, relevantDocuments } =
-              (await props.submitAction?.(formData)) ?? {};
+            // const { prompt, relevantDocuments } =
+            //   (await props.submitAction?.(formData)) ?? {};
 
-            setIsFormLoading(false);
-            setRelevantDocuments(relevantDocuments ?? []);
+            // setIsFormLoading(false);
+            // setRelevantDocuments(relevantDocuments ?? []);
 
-            if (!prompt) return;
-            await complete(prompt);
+            // if (!prompt) return;
+            // await complete(prompt);
           }}
         >
           <div className="mb-2 flex flex-row items-center space-x-1.5">
@@ -160,6 +220,8 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
           </ol>
         )}
       </Container>
+
+      <div ref={containerRef} className="h-[50px]" />
     </>
   );
 };
