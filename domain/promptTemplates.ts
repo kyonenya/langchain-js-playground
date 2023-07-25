@@ -3,6 +3,7 @@ import { PDFDocument } from './PDFDocument';
 
 const qaTemplate =
   PromptTemplate.fromTemplate(`Given the following extracted parts of a long document and a question, create a final answer. Ignore the line breaks of the documents.
+If the question text is in English, answer in English; if in Japanese, answer in Japanese.
 
 QUESTION: {question}
 =========
