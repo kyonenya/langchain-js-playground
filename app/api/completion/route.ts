@@ -25,7 +25,7 @@ export async function POST(req: Request) {
    * @see https://sdk.vercel.ai/docs/api-reference/use-completion#example-building-a-spell-check
    */
   const response = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-3.5-turbo-16k',
     stream: true,
     messages: [{ role: 'user', content: prompt }],
   });

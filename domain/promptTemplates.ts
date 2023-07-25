@@ -2,7 +2,7 @@ import { PromptTemplate } from 'langchain/prompts';
 import { PDFDocument } from './PDFDocument';
 
 const qaTemplate =
-  PromptTemplate.fromTemplate(`Given the following extracted parts of a long document and a question, create a final answer. If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+  PromptTemplate.fromTemplate(`Given the following extracted parts of a long document and a question, create a final answer. Ignore the line breaks of the documents.
 
 QUESTION: {question}
 =========
