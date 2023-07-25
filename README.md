@@ -25,6 +25,6 @@ PDF文書の中から質問に関連しそうな箇所を類似度検索をか�
 
 ## 使い方
 
-![Animation_quasi-observation](https://github.com/kyonenya/next-langchain-pdf/assets/62150154/121f4915-9ee8-4e48-847a-f3545e7620f0)
+![Animation_quasi-observation](https://github.com/kyonenya/next-langchain-pdf/assets/62150154/ccc6b294-bc83-46c1-aa2c-6afc4a284726)
 
 PDFには拙論 [サルトル想像論における「準観察」のテーゼ――想像と知覚の差異について](https://hosei.repo.nii.ac.jp/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=26057&item_no=1&page_id=13&block_id=83) を使用。
