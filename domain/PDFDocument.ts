@@ -27,7 +27,7 @@ export type PDFDocument = Pick<
 >;
 
 export const toJSONSerializable = (documents: Document[]) =>
-  documents.map((doc) => ({ ...doc })) as PDFDocument[]; // class -> plain object
+  documents.map((doc) => ({ ...doc })) as PDFDocument[]; // Class -> plain object
 
 export const parsePDF = async (filePathOrBlob: string | Blob) => {
   const loader = new PDFLoader(filePathOrBlob, { splitPages: true });

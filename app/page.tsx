@@ -40,14 +40,10 @@ export default async function Home() {
       question,
       documents: chunckDocuments,
       limit: 5,
-      // mock: true,
     });
     const prompt = await getQAPrompt(question, relevantDocuments);
 
-    return {
-      prompt,
-      relevantDocuments: relevantDocuments.map((doc) => ({ ...doc })), // serialize
-    };
+    return { prompt, relevantDocuments };
   };
 
   return (

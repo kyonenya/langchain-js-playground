@@ -1,24 +1,14 @@
 'use client';
 
 import { useCompletion } from 'ai/react';
-import { useState, Fragment, PropsWithChildren } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { useState, Fragment } from 'react';
 import { PDFDocument } from '../domain/PDFDocument';
-import { ChatGPTIcon } from './_components/ChatGPTIcon';
-import { Loader } from './_components/Loader';
+import { Container } from './_components/Container';
 import { Skelton } from './_components/Skelton';
+import { ChatGPTIcon } from './_svg/ChatGPTIcon';
+import { Loader } from './_svg/Loader';
+import { PaperPlaneIcon } from './_svg/PaperPlaneIcon';
 import { SubmitAction } from './page';
-
-const Container = (props: PropsWithChildren<{ className?: string }>) => (
-  <div
-    className={twMerge(
-      'container mx-auto px-4 py-6 md:max-w-2xl lg:max-w-[38rem] lg:px-0 xl:max-w-3xl',
-      props.className
-    )}
-  >
-    {props.children}
-  </div>
-);
 
 export const Client = (props: { submitAction?: SubmitAction }) => {
   const {
@@ -81,20 +71,7 @@ export const Client = (props: { submitAction?: SubmitAction }) => {
                 className="absolute bottom-1.5 right-2 h-8 w-8 rounded-md p-1  text-white transition-colors enabled:bg-green-500 enabled:hover:bg-green-600 disabled:text-gray-400 disabled:opacity-40 enabled:dark:hover:bg-green-400 dark:disabled:hover:bg-transparent md:bottom-3 md:right-3 md:p-2"
               >
                 <span>
-                  {!isChatLoading && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      strokeWidth="2"
-                      className="m-1 h-4 w-4 md:m-0"
-                    >
-                      <path
-                        d="M.5 1.163A1 1 0 0 1 1.97.28l12.868 6.837a1 1 0 0 1 0 1.766L1.969 15.72A1 1 0 0 1 .5 14.836V10.33a1 1 0 0 1 .816-.983L8.5 8 1.316 6.653A1 1 0 0 1 .5 5.67V1.163Z"
-                        fill="currentColor"
-                      ></path>
-                    </svg>
-                  )}
+                  {!isChatLoading && <PaperPlaneIcon />}
                   {isChatLoading && <Loader />}
                 </span>
               </button>
